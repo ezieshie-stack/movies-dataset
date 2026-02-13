@@ -1,5 +1,17 @@
 .streamlit/secrets.toml
 
+# OS files
+.DS_Store
+**/.DS_Store
+
+# Large data files (raw data)
+data/*.csv
+
+# Large intermediate output CSVs
+outputs/movies_eda_cleaned.csv
+outputs/movies_eda_comprehensive.csv
+outputs/movies_full_analysis.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
