@@ -299,7 +299,7 @@ Open the CSV files in `outputs/tableau/` with [Tableau Public](https://public.ta
 
 ## 👤 Author
 
-**David Ezieshi**
-- 🔗 [Tableau Public](https://public.tableau.com/app/profile/david.ezieshi)
-- 🔗 [GitHub](https://github.com/ezieshie-stack)
-- 🔗 [LinkedIn](https://www.linkedin.com/in/davidezieshi)
+> *"Every dataset has a story. My job is to find it, prove it, and make it actionable."*
+
+**David Ezieshi** — Business Analyst & Data Analytics  
+[LinkedIn](https://www.linkedin.com/in/david-ezieshi/) | [GitHub](https://github.com/ezieshie-stack) | [Tableau Public](https://public.tableau.com/app/profile/david.ezieshi)
