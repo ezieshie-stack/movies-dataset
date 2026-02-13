@@ -19,7 +19,7 @@ This project set out to answer that question by analyzing **5,009 movies** from 
 
 ---
 
-## 📊 What Was Done
+## 📊 Methodology & Approach
 
 This project followed a structured **3-phase data analysis pipeline**, taking raw CSV files and turning them into actionable business intelligence.
 
