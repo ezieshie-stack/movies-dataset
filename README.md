@@ -125,20 +125,33 @@ The biggest drop-off occurs between **"Generated Revenue"** and **"Recovered Inv
 
 ---
 
-## 📈 Tableau Dashboards
+## 📈 Interactive Dashboards
 
-Interactive dashboards were built to make these findings explorable:
+### 🖥️ Streamlit Dashboard (Run Locally)
 
-| Dashboard | Focus | Key Charts |
-|-----------|-------|------------|
-| **Movie Industry Overview** | High-level KPIs | KPI cards, Budget vs Revenue scatter, Genre revenue bars, Release year treemap |
-| **Financial Performance** | Money deep-dive | Budget & Revenue distributions, Budget category ROI, Genre profitability comparison |
-| **People Analytics** | Directors & Actors | Top 15 by revenue, Success rate rankings, Content rating performance |
-| **Time Trends & Ratings** | Historical patterns | Revenue vs Budget over time (area chart), IMDB & TMDB rating distributions |
+A 5-page interactive dashboard built with Streamlit & Plotly for exploring all findings:
 
-🔗 [**View Live on Tableau Public →**](https://public.tableau.com/views/MovieIndustryAnalysis_17681128080920/OverviewDashboard)
+| Page | What You'll See |
+|------|----------------|
+| **🏠 Overview** | KPI cards (total revenue, success rate, median ROI), Budget vs Revenue scatter with break-even line, Revenue by genre, Yearly revenue trends, Rating distribution |
+| **💰 Financial Performance** | Budget category success rates vs ROI, ROI box plots by budget tier, Budget & Revenue distributions |
+| **🎭 Genre & People** | Genre risk-return matrix, Top 15 Directors & Actors by revenue, Content rating performance comparison |
+| **🔄 Funnel Analysis** | 8-stage investment-to-profitability funnel, Stage-by-stage drop-off rates, Genre-level funnel conversion breakdown |
+| **📋 Movie Details** | Searchable, sortable table of all 5,009 movies with profitability indicators and CSV download |
 
-> **Note:** The dashboards are being rebuilt with an advanced, app-style design featuring sidebar navigation, sparklines, and interactive filtering. See [`docs/Advanced_Dashboard_Guide.md`](docs/Advanced_Dashboard_Guide.md) for the rebuild plan.
+**Run it:**
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+### 📊 Tableau Dashboards (Online)
+
+Static dashboards are also available on Tableau Public:
+
+🔗 [**View on Tableau Public →**](https://public.tableau.com/views/MovieIndustryAnalysis_17681128080920/OverviewDashboard)
+
+> The Tableau dashboards are being rebuilt with an advanced, app-style design. See [`docs/Advanced_Dashboard_Guide.md`](docs/Advanced_Dashboard_Guide.md) for the rebuild plan.
 
 ---
 
@@ -227,6 +240,8 @@ Movies Dataset/
 │   ├── Tableau_EDA_Guide.md                 # Step-by-step Tableau guide
 │   └── Advanced_Dashboard_Guide.md          # Advanced dashboard rebuild plan
 │
+├── app.py                                   # Streamlit interactive dashboard
+├── requirements.txt                         # Python dependencies
 └── README.md
 ```
 
@@ -241,7 +256,9 @@ Movies Dataset/
 | **NumPy** | 1.24+ | Numerical computations |
 | **Matplotlib** | 3.7+ | Static visualizations |
 | **Seaborn** | 0.12+ | Statistical visualization |
-| **Tableau Public** | 2024.x | Interactive dashboard creation |
+| **Streamlit** | 1.30+ | Interactive web dashboard |
+| **Plotly** | 5.18+ | Dynamic charts & visualizations |
+| **Tableau Public** | 2024.x | Online dashboard publishing |
 
 ---
 
@@ -277,12 +294,6 @@ Open the CSV files in `outputs/tableau/` with [Tableau Public](https://public.ta
 - **The Movie Database (TMDB)** — 5,000 movies dataset via [Kaggle](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)
 - **IMDB Movie Metadata** — Extended metadata including director, actor, and social media metrics
 - Combined and merged into a single 5,009-row, 42-column master dataset
-
----
-
-## 📄 License
-
-This project is licensed under the Apache 2.0 License — see [LICENSE](LICENSE) for details.
 
 ---
 
