@@ -184,11 +184,13 @@ This isn't a theoretical model. These are the actual success rates from 5,009 mo
 
 ## Dashboards
 
-### Streamlit (Local, 5 Pages)
-Overview KPIs · Financial Performance · Genre & People Analysis · Funnel Visualization · Movie Browser
+### [**View Live Dashboard**](https://ezieshie-stack-movies-dataset.streamlit.app)
 
-![Streamlit Dashboard Preview](outputs/streamlit_dashboard_preview.png)
+5 interactive pages: Overview KPIs · Financial Performance · Genre & People Analysis · Funnel Visualization · Movie Browser
 
+[![Streamlit Dashboard Preview](outputs/streamlit_dashboard_preview.png)](https://ezieshie-stack-movies-dataset.streamlit.app)
+
+**Run locally:**
 ```bash
 streamlit run app.py
 ```
