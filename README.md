@@ -1,305 +1,287 @@
-# 🎬 Movies Dataset — End-to-End Data Analysis & Visualization
+# 🎬 Movie Industry Profitability Analysis
 
-## 📌 Problem Statement
+![Status](https://img.shields.io/badge/Status-Complete-brightgreen) ![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
 
-The movie industry generates billions of dollars annually, yet **nearly half of all films fail to recoup their investment**. Studios, investors, and analysts face a critical question:
+> A portfolio project demonstrating end-to-end business analysis — from understanding the industry's economics, to cleaning messy data, to delivering insights that could change how a studio allocates capital.
 
-> **What separates a profitable movie from a financial failure?**
-
-This project set out to answer that question by analyzing **5,009 movies** from The Movie Database (TMDB), spanning nearly five decades (1970–2017). The goal was to uncover the financial, creative, and market factors that drive movie profitability — and to present those insights through interactive dashboards that a studio executive or analyst could actually use.
+**Built for:** Studio executives evaluating capital allocation, film investors assessing risk, and data professionals studying industry-level profitability patterns.
 
 ---
 
-## 🎯 Objectives
+## Table of Contents
 
-1. **Explore** the raw data to understand distributions, patterns, and anomalies in movie financials
-2. **Transform** messy, multi-source data into clean, analysis-ready datasets
-3. **Analyze** profitability through a structured Investment-to-Profitability funnel
-4. **Visualize** findings in interactive Tableau dashboards for stakeholder consumption
-
----
-
-## 📊 Methodology & Approach
-
-This project followed a structured **3-phase data analysis pipeline**, taking raw CSV files and turning them into actionable business intelligence.
-
-### Phase 1: Exploratory Data Analysis (EDA)
-
-**Script:** [`01_exploratory_data_analysis.py`](notebooks/01_exploratory_data_analysis.py) (998 lines)
-
-The first step was understanding the data. The EDA phase examined the merged dataset across multiple dimensions:
-
-| Analysis Area | What Was Examined |
-|---------------|-------------------|
-| **Data Quality** | Missing data patterns across 42 columns; identified that `gross`, `budget`, and several metadata fields had significant gaps |
-| **Financial Distributions** | Budget, Revenue, and Profit distributions — revealed extreme right-skew (a few blockbusters dominate, most films earn modestly) |
-| **Budget vs Revenue** | Scatter analysis with break-even line — found that **54.5%** of movies fall above break-even |
-| **Genre Performance** | Revenue, ROI, and success rates across all major genres — Drama has the most films, but Mystery and Horror deliver the highest ROI |
-| **Director & Actor Rankings** | Top 15 directors and actors by total revenue, average ROI, and consistency |
-| **Content Ratings** | How PG-13, R, PG, and G-rated films compare on financial metrics |
-| **Social Media & Popularity** | Facebook likes (movie, cast, director) correlated with box office performance |
-| **Time Trends** | Revenue and budget growth from 1970 to 2017, showing industry inflation and peak years |
-| **Correlation Analysis** | Heatmap of all numerical variables — strongest correlations: Budget↔Revenue (0.73), Vote Count↔Revenue (0.78) |
-
-**Output:** 16 PNG visualizations saved to `outputs/`
+- [The Business Problem](#the-business-problem)
+- [Understanding the Business Model](#understanding-the-business-model)
+- [The Data](#the-data)
+- [What the Analysis Revealed](#what-the-analysis-revealed)
+- [Business Recommendations](#business-recommendations)
+- [Visual Preview](#visual-preview)
+- [Dashboards](#dashboards)
+- [Skills Demonstrated](#skills-demonstrated)
+- [Limitations & Assumptions](#limitations--assumptions)
+- [Lessons Learned](#lessons-learned)
+- [Future Improvements](#future-improvements)
 
 ---
 
-### Phase 2: ETL Pipeline (Extract, Transform, Load)
+## The Business Problem
 
-**Script:** [`02_etl_tableau_prep.py`](notebooks/02_etl_tableau_prep.py) (658 lines)
+The film industry operates on a model most investors would reject: **nearly half of all products fail**. Studios spend $35M on average to produce a single film, with no guarantee it will recover its investment. Unlike most industries, there's no prototype, no beta test, no soft launch — a movie either lands or it doesn't.
 
-Raw data is messy. This phase cleaned and transformed it into **6 structured, Tableau-ready CSV files** with engineered features.
+This creates a critical business question that studios, distributors, and investors face every quarter:
 
-#### How the Data Was Transformed:
+> **Where does money get lost in the moviemaking pipeline, and what levers actually reduce that risk?**
 
-**1. Financial Cleaning**
-- Combined `revenue` and `gross` columns (using revenue first, gross as fallback)
-- Calculated derived metrics: `Profit = Revenue - Budget`, `ROI = (Profit / Budget) × 100`
-- Flagged `Is Profitable` (binary: 1 if Revenue > Budget)
-
-**2. Categorical Feature Engineering**
-- **Budget Category:** Low Budget (<$15M) → Mid Budget ($15M–$40M) → High Budget ($40M–$100M) → Blockbuster ($100M+)
-- **ROI Category:** Flop (ROI < 0%) → Low (0–100%) → Medium (100–300%) → High (300–1000%) → Mega-Hit (1000%+)
-- **Rating Category:** Poor (<4) → Below Average (4–5.5) → Average (5.5–7) → Good (7–8) → Excellent (8+)
-- **Era:** Classic (pre-1980) → 1980s → 1990s → 2000s → 2010s
-- **Runtime Category:** Short (<90min) → Standard (90–120min) → Long (120–150min) → Epic (150min+)
-
-**3. Genre Parsing**
-- Parsed JSON-formatted genre strings into clean lists
-- Exploded multi-genre movies into individual rows (5,009 movies → 14,884 genre-rows)
-- Assigned `Primary Genre` (first listed genre)
-
-**4. Social Media Metrics**
-- Calculated `Total Social Engagement` = Movie FB Likes + Cast FB Likes + Director FB Likes
-- Categorized engagement: Low → Medium → High → Viral
-
-#### Output Tables:
-
-| Table | Rows | Purpose |
-|-------|------|---------|
-| [`movies_main.csv`](outputs/tableau/movies_main.csv) | 5,009 | Core dataset with all engineered features |
-| [`movies_by_genre.csv`](outputs/tableau/movies_by_genre.csv) | 14,884 | One row per movie-genre combination |
-| [`director_performance.csv`](outputs/tableau/director_performance.csv) | 2,300+ | Aggregated director stats (avg ROI, success rate, total revenue) |
-| [`actor_performance.csv`](outputs/tableau/actor_performance.csv) | 4,500+ | Aggregated actor stats with star power metrics |
-| [`yearly_trends.csv`](outputs/tableau/yearly_trends.csv) | 47 | Year-over-year industry trends (1970–2017) |
-| [`funnel_analysis.csv`](outputs/tableau/funnel_analysis.csv) | 5,009 | Each movie tagged with its funnel stage |
+This project analyzes **5,009 movies** across five decades (1970–2017) to answer that question with data.
 
 ---
 
-### Phase 3: Investment-to-Profitability Funnel Analysis
+## Understanding the Business Model
 
-**Script:** [`03_funnel_analysis.py`](notebooks/03_funnel_analysis.py) (614 lines)
-
-This phase introduced a **creative, business-style funnel** — treating movie investment like a sales pipeline to identify where money gets lost.
-
-#### The 8-Stage Funnel:
+Before touching the data, I mapped the economics:
 
 ```
-Stage 1: Total Movies (5,009)
-  ↓ 100%
-Stage 2: Has Budget Data
-  ↓
-Stage 3: Generated Revenue (earned something at the box office)
-  ↓
-Stage 4: Recovered Investment (revenue > 50% of budget)
-  ↓
-Stage 5: Profitable (revenue > budget)
-  ↓
-Stage 6: Strong ROI (> 100% return)
-  ↓
-Stage 7: High ROI (> 300% return)
-  ↓
-Stage 8: Blockbuster ROI (> 1000% return)
+Studio invests $X (production budget)
+    → Film is produced
+    → Marketing spend adds 50-100% on top (not in this dataset)
+    → Distributed to theaters (theaters keep ~50% of ticket sales)
+    → Earns box office revenue
+        → Revenue > Budget? → Profit on paper
+        → Revenue < Budget? → Loss
 ```
 
-#### Segment Breakdowns:
-The funnel was then broken down by:
-- **Genre** — Which genres convert investment to profit most efficiently?
-- **Budget Tier** — Do bigger budgets mean safer bets or bigger risks?
-- **Era** — Has the industry gotten better or worse at generating returns?
-- **Director** — Which directors have the best investment-to-hit conversion?
+> **Important caveat:** The budget figures in this dataset cover *production costs only*. Real break-even requires ~2-2.5x the production budget when marketing and distribution are included. This analysis works with what the data provides, but acknowledges this gap.
 
-#### Key Bottleneck Found:
-The biggest drop-off occurs between **"Generated Revenue"** and **"Recovered Investment"** — meaning many movies earn *something*, but not enough to break even. This is where studios lose the most money.
+The challenge: **the relationship between investment and return is not linear**. A $200M movie doesn't earn 2x what a $100M movie earns. Some $5M horror films return 4000%, while $250M blockbusters lose everything. The data needed to explain *why*.
 
 ---
 
-## 📈 Interactive Dashboards
+## The Data
 
-### 🖥️ Streamlit Dashboard (Run Locally)
+| Source | Rows | What It Contains |
+|--------|------|-----------------|
+| **TMDB** | 4,803 | Budget, revenue, genres, ratings, popularity, release dates |
+| **IMDB Metadata** | 5,043 | Directors, actors, Facebook likes, content ratings |
+| **Merged Master** | 5,009 | 42 columns — financial, creative, social, and temporal features |
 
-A 5-page interactive dashboard built with Streamlit & Plotly for exploring all findings:
+**Data Quality Issues Found:**
+- Budget missing for 10% of films; revenue missing for 13%
+- Genre data stored as raw JSON strings — required parsing
+- Social media metrics had nulls that needed logical imputation
+- Character encoding issues in movie titles
 
-| Page | What You'll See |
-|------|----------------|
-| **🏠 Overview** | KPI cards (total revenue, success rate, median ROI), Budget vs Revenue scatter with break-even line, Revenue by genre, Yearly revenue trends, Rating distribution |
-| **💰 Financial Performance** | Budget category success rates vs ROI, ROI box plots by budget tier, Budget & Revenue distributions |
-| **🎭 Genre & People** | Genre risk-return matrix, Top 15 Directors & Actors by revenue, Content rating performance comparison |
-| **🔄 Funnel Analysis** | 8-stage investment-to-profitability funnel, Stage-by-stage drop-off rates, Genre-level funnel conversion breakdown |
-| **📋 Movie Details** | Searchable, sortable table of all 5,009 movies with profitability indicators and CSV download |
+All resolved through the ETL pipeline ([full detail](docs/methodology.md)).
 
-**Run it:**
+---
+
+## What the Analysis Revealed
+
+### 1. The Industry Is a Coin Flip
+
+**54.5% of movies are profitable.** That means for every two films a studio releases, one loses money. This isn't a surprise to insiders — but the data quantifies *how much* is lost and *where*.
+
+**Business Impact:** Studios should think in portfolio terms, not individual bets. Diversifying across budget tiers and genres reduces aggregate risk.
+
+---
+
+### 2. Bigger Budgets ≠ Better Returns
+
+| Budget Tier | Count | Success Rate | Median ROI | Risk Profile |
+|-------------|-------|-------------|------------|------|
+| Low (<$15M) | 1,277 | 71.7% | High variance | Rare hit = extraordinary ROI. Most fail quietly |
+| **Mid ($15M–$40M)** | **1,319** | **68.5%** | **86.5%** | **Best risk-adjusted — consistent, limited downside** |
+| High ($40M–$100M) | 988 | 72.9% | Moderate | Solid performers, but capital-intensive |
+| Mega ($100M+) | 310 | 90.6% | Lower | Highest success rate — but when they fail, losses are catastrophic |
+
+**Budget ↔ Revenue correlation: 0.73** — spending more *correlates* with higher revenue, but the ROI tells the opposite story. The marginal return on each additional dollar of budget decreases.
+
+**Business Impact:** Blockbusters have the highest success rate (90.6%), but they require $100M+ per bet — a single failure wipes out multiple wins. Mid-budget films ($15M–$40M) offer the **most consistent returns at manageable risk**.
+
+---
+
+### 3. Genre Is a Risk Lever, Not Just a Creative Choice
+
+| Genre | Avg ROI | Why |
+|-------|---------|-----|
+| **Horror / Mystery** | Highest | Audiences show up regardless of budget — no need for $100M in VFX |
+| **Animation / Family** | High | Built-in audience (kids + parents), merchandise revenue extends value |
+| **Comedy** | Moderate | Consistent but rarely spectacular — the "steady earner" |
+| **Action / Adventure** | Moderate | High total revenue, but requires massive budgets — high downside risk |
+| **Drama** | Lowest | Most oversaturated genre — too many films chasing the same audience |
+
+**Business Impact:** Genre selection is an *investment decision*, not just a creative one. A portfolio weighted toward Horror and Animation has a structurally higher expected return than one weighted toward Drama and Sci-Fi.
+
+---
+
+### 4. The Funnel Shows Where Money Dies
+
+I modeled the movie lifecycle as an **Investment-to-Profitability funnel** — the same methodology used in sales pipeline analysis — to identify exactly where conversion drops:
+
+```
+Stage                              Count    % of Total    Drop
+─────────────────────────────────────────────────────────────────
+Total Movies                       5,009     100.0%
+Has Budget Data                    3,951      78.9%      -21.1%
+Generated Revenue                  3,767      75.2%       -3.7%
+Recovered 50%+ of Budget           3,191      63.7%      -11.5%  ← Biggest leak
+Profitable (Revenue > Budget)      2,732      54.5%       -9.2%
+Strong ROI (>100%)                 2,019      40.3%      -14.2%
+Exceptional ROI (>300%)            1,425      28.4%      -11.9%
+```
+
+**The #1 bottleneck:** The 11.5% drop between "Generated Revenue" and "Recovered 50%+" — 576 movies earned *something* at the box office but couldn't recover even half their budget. This is where the most capital is destroyed industry-wide.
+
+**Business Impact:** The highest-leverage intervention isn't making better movies — it's tighter cost control at the production stage. If you can lower the break-even threshold by 20%, you convert hundreds of "almost profitable" films into profitable ones.
+
+---
+
+### 5. People Reduce Risk
+
+- **Christopher Nolan, Steven Spielberg, James Cameron** consistently outperform industry averages on both revenue *and* ROI — a proven director functions as a risk-mitigation asset
+- **Vote Count ↔ Revenue: r = 0.78** — the strongest predictor of box office performance is audience engagement, not budget or critical ratings
+- **PG-13** films hit the broadest demographic — they're the financial sweet spot for audience reach
+
+**Business Impact:** Talent attachment isn't just a creative decision — it's a risk hedge. Studios should model director/actor track records as an input to greenlight decisions.
+
+---
+
+## Business Recommendations
+
+Based on the analysis, here's what a studio's capital allocation strategy should look like:
+
+| Recommendation | Rationale |
+|----------------|-----------|
+| **Weight portfolio toward $15M–$40M productions** | Best risk-adjusted ROI; limits catastrophic downside |
+| **Allocate capital to Horror/Mystery** | Highest capital efficiency — low cost, high conversion |
+| **Attach proven directors to high-budget bets** | Measurably reduces failure probability on $100M+ films |
+| **Default to PG-13 unless genre demands otherwise** | Maximizes addressable audience |
+| **Implement break-even threshold analysis pre-greenlight** | The #1 funnel leak is "earned revenue but not enough" — tighter upfront modeling prevents this |
+
+### Quantified Impact
+
+If a studio had weighted its portfolio toward **Horror and Mystery** titles:
+- Success rate would have been **84.6–85.7%** — vs the industry's **72.5%** overall
+- That's a **12+ percentage point improvement** in capital efficiency
+- On a 100-film portfolio, that's **12 fewer losses** per cycle
+
+This isn't a theoretical model — these are the actual success rates from 5,009 movies in the dataset.
+
+---
+
+## Visual Preview
+
+| Budget vs Revenue Landscape | Genre Performance |
+|:--:|:--:|
+| ![Budget vs Revenue](outputs/budget_vs_revenue_comprehensive.png) | ![Genre Analysis](outputs/genre_analysis_comprehensive.png) |
+
+| Industry Trends (1970–2017) | Correlation Matrix |
+|:--:|:--:|
+| ![Time Trends](outputs/time_trends_comprehensive.png) | ![Correlations](outputs/correlation_matrix_comprehensive.png) |
+
+> 16 total visualizations available in [`outputs/`](outputs/)
+
+---
+
+## Dashboards
+
+### Streamlit (Local — 5 Pages)
+Overview KPIs · Financial Performance · Genre & People Analysis · Funnel Visualization · Movie Browser
+
+![Streamlit Dashboard Preview](outputs/streamlit_dashboard_preview.png)
+
 ```bash
-pip install -r requirements.txt
 streamlit run app.py
 ```
 
-### 📊 Tableau Dashboards (Online)
-
-Static dashboards are also available on Tableau Public:
-
-🔗 [**View on Tableau Public →**](https://public.tableau.com/views/MovieIndustryAnalysis_17681128080920/OverviewDashboard)
-
-> The Tableau dashboards are being rebuilt with an advanced, app-style design. See [`docs/Advanced_Dashboard_Guide.md`](docs/Advanced_Dashboard_Guide.md) for the rebuild plan.
+> Dependencies are listed in `requirements.txt`. If running for the first time: `pip install -r requirements.txt`
 
 ---
 
-## 🔑 Key Findings & Results
+## Skills Demonstrated
 
-### Results at a Glance
-
-| Metric | Result | Insight |
-|--------|--------|---------|
-| **Total Movies Analyzed** | 5,009 | Spanning 1970–2017, covering nearly 50 years of cinema |
-| **Industry Success Rate** | 54.5% | Nearly half of all movies **lose money** — the industry is a coin flip |
-| **Average Budget** | ~$35M | But ranges from under $1M to $300M+ — extreme variance |
-| **Average Revenue** | ~$82M | Top earners distort this; median revenue is much lower |
-| **Highest ROI Genre** | Mystery / Horror | Low budgets + strong audience = most capital-efficient |
-| **Best Budget Range** | $15M–$40M | Mid-budget films offer the best risk-adjusted returns |
-| **Budget↔Revenue Correlation** | 0.73 | Spending more *helps*, but it doesn't guarantee profit |
-| **Vote Count↔Revenue Correlation** | 0.78 | Audience engagement is the strongest predictor of revenue |
-| **Biggest Funnel Leak** | Revenue → Break-Even | Many films earn *something* but fail to recover the full budget |
-| **Blockbuster ROI Hit Rate** | ~3-5% | Only a tiny fraction of all films achieve 1000%+ ROI |
+| Skill | Application |
+|-------|------------|
+| **Business Understanding** | Mapped the studio P&L model before touching data |
+| **EDA** | Distributions, correlations, outlier detection, missing data profiling |
+| **ETL / Data Engineering** | JSON parsing, multi-source merge, feature engineering, categorical binning |
+| **Business Frameworks** | Investment-to-Profitability funnel modeled after sales pipeline methodology |
+| **Data Visualization** | Matplotlib/Seaborn (static), Plotly/Streamlit (interactive) |
+| **Analytical Communication** | Translated data patterns into capital allocation recommendations |
 
 ---
 
-### Financial Reality
-- **54.5% of movies are profitable** — meaning 45.5% represent a total loss for investors
-- **Average ROI (298,361%)** is misleading — it's driven by a handful of massive outliers like Paranormal Activity (~$194M revenue on a $15K budget). The **median ROI** tells the real story: most profitable films earn moderate returns
-- The break-even point is the biggest hurdle: many movies earn *some* box office revenue but not enough to cover the production budget. This is the #1 place studios lose money
-
-### Genre Insights
-- **Mystery and Horror** deliver the highest ROI despite lower budgets — they're the most capital-efficient genres because audiences show up even without $100M in visual effects
-- **Drama** is the most produced genre but has middling financial performance — the genre is oversaturated, making it harder to stand out
-- **Action and Adventure** generate the highest *total* revenue, but they require massive budgets ($80M+), meaning the downside risk is equally massive when they flop
-- **Comedy** sits in a sweet spot: moderate budgets with consistent (if unglamorous) returns
-
-### Budget Strategy
-- **Mid-budget films ($15M–$40M)** offer the best risk-adjusted returns — large enough for quality production, small enough to limit catastrophic losses
-- **Blockbuster budgets ($100M+)** have higher success rates overall, but when they fail, the losses are catastrophic (often $50M-$200M lost per film)
-- **Low-budget films (<$15M)** are high-variance: most fail quietly, but the rare hit (e.g., horror) delivers extraordinary ROI
-
-### People & Timing
-- **Christopher Nolan, Steven Spielberg, and James Cameron** consistently outperform industry averages on both revenue and ROI — their name alone acts as a risk-reduction factor
-- **Industry revenue peaked around 2015**, with average budgets growing faster than average returns in recent years — a warning sign of cost inflation
-- **PG-13 films** are the financial sweet spot — they draw the broadest audience demographics with strong box office potential
-
-### The Funnel Truth
-- The funnel narrows most sharply between **"Generated Revenue"** and **"Recovered Investment"** — this is the #1 bottleneck
-- Only **~15%** of all movies achieve Strong ROI (>100% return on investment)
-- Genre choice and budget discipline are the two biggest levers at the profitability gate
-- **Horror and Mystery** have the tightest funnels (highest conversion from "invested" to "profitable"), while **Drama** and **Sci-Fi** have the leakiest
-
-### 💡 Business Recommendations (from the Data)
-
-1. **Prioritize mid-budget productions** ($15M–$40M) over blockbuster bets to maximize portfolio ROI
-2. **Invest in Horror/Mystery** as a capital-efficient genre — high conversion, low downside
-3. **Pair high-budget films with proven directors** (Nolan, Spielberg-tier talent) to reduce risk
-4. **Target PG-13 ratings** for maximum audience reach and box office potential
-5. **Watch the break-even gap** — the largest value destruction happens when films earn revenue but can't cover costs. Tighter budget control at the production stage is the highest-leverage intervention
-
----
-
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 Movies Dataset/
-├── data/                                    # Raw datasets
-│   ├── tmdb_5000_movies.csv                 # TMDB movie data (5,000 movies)
-│   ├── movie_metadata.csv                   # Extended metadata from IMDB
-│   └── tmdb_5000_movies_mergedwith_movie_metadata.csv  # Merged master file
-│
-├── notebooks/                               # Analysis scripts (Python)
-│   ├── 01_exploratory_data_analysis.py      # EDA with 16 visualizations
-│   ├── 02_full_data_merge.py                # Dataset merging logic
-│   ├── 02_etl_tableau_prep.py               # ETL → 6 Tableau-ready tables
-│   └── 03_funnel_analysis.py                # 8-stage funnel analysis
-│
-├── outputs/                                 # Generated outputs
-│   ├── tableau/                             # Tableau-ready CSV datasets
-│   │   ├── movies_main.csv                  # 5,009 movies, all features
-│   │   ├── movies_by_genre.csv              # 14,884 genre-exploded rows
-│   │   ├── director_performance.csv         # Aggregated director stats
-│   │   ├── actor_performance.csv            # Aggregated actor stats
-│   │   ├── yearly_trends.csv                # Year-over-year trends
-│   │   └── funnel_analysis.csv              # Funnel stage assignments
-│   └── *.png                                # 16 EDA visualization charts
-│
+├── data/                           # Raw datasets (TMDB + IMDB)
+├── notebooks/
+│   ├── 01_exploratory_data_analysis.py   # EDA — 16 charts
+│   ├── 02_etl_tableau_prep.py            # ETL → 6 clean CSVs
+│   └── 03_funnel_analysis.py             # 8-stage funnel
+├── outputs/
+│   ├── tableau/                    # Tableau-ready datasets
+│   └── *.png                       # Visualization charts
 ├── docs/
-│   ├── Tableau_EDA_Guide.md                 # Step-by-step Tableau guide
-│   └── Advanced_Dashboard_Guide.md          # Advanced dashboard rebuild plan
-│
-├── app.py                                   # Streamlit interactive dashboard
-├── requirements.txt                         # Python dependencies
-└── README.md
+│   └── methodology.md              # Full technical detail
+├── app.py                          # Streamlit dashboard
+└── requirements.txt
 ```
 
----
+## Tech Stack
 
-## 🛠️ Tech Stack
+| Tool | Purpose |
+|------|---------|
+| **Python** (Pandas, NumPy) | Data analysis |
+| **Matplotlib / Seaborn** | Static visualizations |
+| **Streamlit / Plotly** | Interactive dashboard |
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| **Python 3.x** | 3.9+ | Data analysis scripting |
-| **Pandas** | 1.5+ | Data manipulation and cleaning |
-| **NumPy** | 1.24+ | Numerical computations |
-| **Matplotlib** | 3.7+ | Static visualizations |
-| **Seaborn** | 0.12+ | Statistical visualization |
-| **Streamlit** | 1.30+ | Interactive web dashboard |
-| **Plotly** | 5.18+ | Dynamic charts & visualizations |
-| **Tableau Public** | 2024.x | Online dashboard publishing |
+## Data Sources
 
----
+- [TMDB 5000 Movies](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata) — Budget, revenue, genres, ratings
+- **IMDB Movie Metadata** — Directors, actors, social media metrics
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-```bash
-pip install pandas numpy matplotlib seaborn
-```
-
-### Run the Analysis
-
-```bash
-# Step 1: Exploratory Data Analysis (generates 16 charts in outputs/)
-python notebooks/01_exploratory_data_analysis.py
-
-# Step 2: ETL Pipeline (generates 6 Tableau CSVs in outputs/tableau/)
-python notebooks/02_etl_tableau_prep.py
-
-# Step 3: Funnel Analysis (generates funnel charts + analysis)
-python notebooks/03_funnel_analysis.py
-```
-
-### View Dashboards
-
-Open the CSV files in `outputs/tableau/` with [Tableau Public](https://public.tableau.com/en-us/s/download) to explore the interactive dashboards.
+For full technical methodology, see [**docs/methodology.md**](docs/methodology.md).
 
 ---
 
-## 📂 Data Source
+## Limitations & Assumptions
 
-- **The Movie Database (TMDB)** — 5,000 movies dataset via [Kaggle](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)
-- **IMDB Movie Metadata** — Extended metadata including director, actor, and social media metrics
-- Combined and merged into a single 5,009-row, 42-column master dataset
+| Limitation | Impact on Analysis |
+|------------|-------------------|
+| **Production budget only** | Marketing costs (often 50-100% of budget) are excluded — true break-even is higher than calculated |
+| **Theatrical revenue only** | No streaming, home video, or merchandise data — total film value is underestimated |
+| **Data ends at 2017** | Doesn't capture the streaming revolution (Netflix originals, Disney+, etc.) |
+| **Survivorship bias** | Dataset skews toward films with available data — truly obscure releases may be underrepresented |
+| **No inflation adjustment** | A $100M budget in 1995 ≠ $100M in 2015 — comparisons across decades are approximate |
+
+These constraints are noted throughout the analysis. The findings remain directionally valid for understanding industry patterns, but absolute dollar figures should be interpreted with caution.
 
 ---
 
-## 👤 Author
+## Lessons Learned
 
-> *"Every dataset has a story. My job is to find it, prove it, and make it actionable."*
+**On the data:** The messiest part wasn't missing values — it was the JSON-encoded columns (genres, production companies, keywords). Parsing these required writing custom extraction functions and deciding how to handle multi-genre films (explode into rows vs. take primary genre). Both approaches were implemented for different use cases.
+
+**On the analysis:** The median tells a completely different story than the mean in this dataset. Average ROI is distorted by extreme outliers (Paranormal Activity: $15K budget → $194M revenue). I learned to always present both, and to explain *why* the numbers diverge — that's the analyst's job, not just reporting the metric.
+
+**On business framing:** The funnel was the most valuable output — not because the numbers were surprising, but because it gave stakeholders a *framework* to think about movie investment. Presenting data as "54.5% are profitable" is a fact. Presenting it as "here's where the other 45.5% fall out of the funnel, and here's the specific stage where intervention has the highest leverage" — that's analysis.
+
+**What I'd do with more data:** Marketing spend would be the single highest-value addition. If I could layer in P&A (prints and advertising) budgets, the true break-even calculation would shift dramatically — and I suspect the "mid-budget sweet spot" finding would become even more pronounced, since blockbusters have proportionally larger marketing costs.
+
+---
+
+## Future Improvements
+
+- [ ] Predictive model to forecast profitability pre-release
+- [ ] Streaming revenue data (Netflix, Disney+) for modern market analysis
+- [ ] Marketing spend (P&A) analysis when data becomes available
+- [ ] Inflation-adjusted budget/revenue comparisons
+- [ ] Tableau Public dashboard for shareable BI views
+
+---
+
+## Author
 
 **David Ezieshi** — Business Analyst & Data Analytics  
-[LinkedIn](https://www.linkedin.com/in/david-ezieshi/) | [GitHub](https://github.com/ezieshie-stack) | [Tableau Public](https://public.tableau.com/app/profile/david.ezieshi)
+[LinkedIn](https://www.linkedin.com/in/david-ezieshi/) · [GitHub](https://github.com/ezieshie-stack)
